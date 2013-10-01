@@ -38,8 +38,9 @@ ActiveRecord::Schema.define(version: 20131001085039) do
     t.string   "authorization_endpoint"
     t.string   "token_endpoint"
     t.string   "scopes_supported"
+    t.string   "response_types_supported"
     t.string   "userinfo_endpoint"
-    t.boolean  "dynamic",                default: false
+    t.boolean  "dynamic",                  default: false
     t.datetime "expires_at"
     t.datetime "created_at"
     t.datetime "updated_at"

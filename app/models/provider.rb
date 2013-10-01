@@ -1,5 +1,6 @@
 class Provider < ActiveRecord::Base
   serialize :scopes_supported, JSON
+  serialize :response_types_supported, JSON
 
   has_many :open_ids
   belongs_to :account
@@ -74,7 +75,7 @@ class Provider < ActiveRecord::Base
   def authorization_uri(redirect_uri, nonce)
     client.redirect_uri = redirect_uri
     client.authorization_uri(
-      response_type: :code,
+      response_type: response_types_supported.include?('code') ? :code : response_types_supported.first,
       nonce: nonce,
       state: nonce,
       scope: scopes_supported
