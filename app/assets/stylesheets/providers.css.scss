@@ -1,0 +1,51 @@
+.providers {
+  label {
+    clear: both;
+    float: left;
+    margin: 0 15px;
+    width: 100px;
+  }
+
+  input[type=text],
+  input[type=url] {
+    float: left;
+    width: 300px;
+  }
+
+  nav input[type=text] {
+    margin: 7px 5px;
+    width: 200px;
+  }
+
+  fieldset {
+    margin-bottom: 15px;
+
+    legend {
+      margin-bottom: 5px;
+    }
+  }
+
+  .protocol_endpoints input {
+    width: 400px;
+  }
+
+  article {
+    position: relative;
+    padding: 15px;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 5px;
+
+    h3 span {
+      font-weight: normal;
+      font-size: .8em;
+    }
+
+    nav {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+    }
+  }
+}

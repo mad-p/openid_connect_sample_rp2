@@ -1,0 +1,20 @@
+.accounts {
+  article {
+    margin: 20px 0;
+  }
+  pre,
+  dl {
+    overflow-x: scroll;
+    padding: 15px;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    margin-bottom: 5px;
+  }
+  pre.jwt {
+    word-wrap: break-word;
+  }
+  .errors {
+    color: red;
+  }
+}

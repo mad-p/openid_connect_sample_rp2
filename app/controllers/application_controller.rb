@@ -1,5 +1,22 @@
 class ApplicationController < ActionController::Base
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
+  include Authentication
+  include Notification
+  include Concerns::NonceManagement
+
   protect_from_forgery with: :exception
+
+  rescue_from(
+    Rack::OAuth2::Client::Error,
+    OpenIDConnect::Exception,
+    MultiJson::LoadError,
+    OpenSSL::SSL::SSLError
+  ) do |e|
+    flash[:error] = if e.message.length > 2000
+      'Unknown Error'
+    else
+      e.message
+    end
+    unauthenticate!
+    redirect_to root_url
+  end
 end
