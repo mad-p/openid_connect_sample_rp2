@@ -14,5 +14,6 @@
 //= require jquery_ujs
 //= require jquery.cookie
 //= require jquery.gritter
+//= require purl
 //= require turbolinks
 //= require_tree .

@@ -1,1 +1,44 @@
-needs JS code here
+<article>
+  <h2>Code</h2>
+  <div id="id_token">
+    <pre class="given">No code given.</pre>
+    <pre class="access_token hidden"></pre>
+    <pre class="userinfo hidden"></pre>
+  </div>
+</article>
+
+<article>
+  <h2>Access Token</h2>
+  <div id="access_token">
+    <pre class="given">No access_token given.</pre>
+    <pre class="verified hidden"></pre>
+  </div>
+</article>
+
+<article>
+  <h2>ID Token</h2>
+  <div id="id_token">
+    <pre class="given">No id_token given.</pre>
+    <pre class="verified hidden"></pre>
+  </div>
+</article>
+
+<script>
+(function ($) {
+  var fragment = $.url().fparam();
+
+  if (fragment.code) {
+    // TODO
+  }
+
+  if (fragment.access_token) {
+    // TODO
+  }
+
+  if (fragment.id_token) {
+    $.post(
+      '<%= provider_open_id_path(@provider) %>'
+    );
+  }
+})(jQuery);
+</script>
