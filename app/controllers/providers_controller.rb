@@ -1,5 +1,9 @@
 class ProvidersController < ApplicationController
-  rescue_from OpenIDConnect::Discovery::DiscoveryFailed, OpenIDConnect::Discovery::InvalidIdentifier do |e|
+  rescue_from(
+    OpenIDConnect::Discovery::DiscoveryFailed,
+    OpenIDConnect::Discovery::InvalidIdentifier,
+    SocketError
+  ) do |e|
     flash[:error] = {
       title: 'Discovery Failed',
       text: 'Could not discover your OP.'

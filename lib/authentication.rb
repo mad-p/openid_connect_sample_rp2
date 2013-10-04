@@ -1,13 +1,14 @@
 module Authentication
+  extend ActiveSupport::Concern
 
   class AuthenticationRequired < StandardError; end
   class AnonymousAccessRequired < StandardError; end
 
-  def self.included(klass)
-    klass.send :include, Authentication::Helper
-    klass.send :before_filter, :optional_authentication
-    klass.send :rescue_from, AuthenticationRequired,  with: :authentication_required!
-    klass.send :rescue_from, AnonymousAccessRequired, with: :anonymous_access_required!
+  included do
+    include Authentication::Helper
+    before_filter :optional_authentication
+    rescue_from AuthenticationRequired,  with: :authentication_required!
+    rescue_from AnonymousAccessRequired, with: :anonymous_access_required!
   end
 
   module Helper
