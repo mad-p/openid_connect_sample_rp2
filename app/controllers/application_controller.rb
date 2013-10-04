@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   include Authentication
-  include Notification
+  include Concerns::Notification
   include Concerns::NonceManagement
 
   protect_from_forgery with: :exception
