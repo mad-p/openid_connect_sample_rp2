@@ -1,6 +1,7 @@
 <p>authenticating...</p>
 
 <%= form_tag provider_open_id_path(@provider), id: 'authenticate' do %>
+  <%= hidden_field_tag :code, nil %>
   <%= hidden_field_tag :id_token, nil %>
 <% end %>
 
@@ -8,11 +9,13 @@
 (function ($) {
   var fragment = $.url().fparam();
   var query    = $.url().param(); // MS returns id_token in query for some reason.
+  var code = fragment.code || query.code;
   var id_token = fragment.id_token || query.id_token;
 
   if (id_token) {
     $('#id_token .given').text(id_token);
-    $('input#id_token').val(id_token)
+    $('input#code').val(code);
+    $('input#id_token').val(id_token);
     $('form#authenticate').submit();
   }
 })(jQuery);

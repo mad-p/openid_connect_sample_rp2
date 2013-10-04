@@ -45,14 +45,15 @@ class Provider < ActiveRecord::Base
       subject_type: 'pairwise'
     ).register!
     self.attributes = {
-      identifier:             client.identifier,
-      secret:                 client.secret,
-      scopes_supported:       config.scopes_supported,
-      authorization_endpoint: config.authorization_endpoint,
-      token_endpoint:         config.token_endpoint,
-      userinfo_endpoint:      config.userinfo_endpoint,
-      jwks_uri:               config.jwks_uri,
-      expires_at:             client.expires_in.try(:from_now)
+      identifier:               client.identifier,
+      secret:                   client.secret,
+      scopes_supported:         config.scopes_supported,
+      response_types_supported: config.response_types_supported,
+      authorization_endpoint:   config.authorization_endpoint,
+      token_endpoint:           config.token_endpoint,
+      userinfo_endpoint:        config.userinfo_endpoint,
+      jwks_uri:                 config.jwks_uri,
+      expires_at:               client.expires_in.try(:from_now)
     }
     save!
   end
@@ -74,8 +75,12 @@ class Provider < ActiveRecord::Base
 
   def authorization_uri(redirect_uri, nonce)
     client.redirect_uri = redirect_uri
+    response_type = Array(response_types_supported).detect do |_response_type_|
+      _response_type_.include?('code') ||
+      _response_type_.include?('id_token')
+    end or raise OpenIDConnect::Exception.new('No supported response_type available for this OP')
     client.authorization_uri(
-      response_type: response_types_supported.include?('code') ? :code : response_types_supported.first,
+      response_type: response_type,
       nonce: nonce,
       state: nonce,
       scope: scopes_supported
@@ -98,7 +103,7 @@ class Provider < ActiveRecord::Base
       client.redirect_uri = redirect_uri
       client.authorization_code = code
       access_token = client.access_token!
-      id_token = access_token.id_token
+      id_token ||= access_token.id_token
     end
     unless id_token.present?
       raise Authentication::AuthenticationRequired.new('No valid ID Token given')
