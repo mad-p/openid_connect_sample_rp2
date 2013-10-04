@@ -1,6 +1,6 @@
 <section>
   <h2>
-    <%= 'accounts.title'.t(name: @userinfo.name) %>
+    <%= 'accounts.title'.t(name: @userinfo.try(:name) || '-- NO NAME --') %>
   </h2>
   <article>
     <h3><%= 'open_id.access_token.title'.t %></h3>

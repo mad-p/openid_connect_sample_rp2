@@ -1,44 +1,18 @@
-<article>
-  <h2>Code</h2>
-  <div id="id_token">
-    <pre class="given">No code given.</pre>
-    <pre class="access_token hidden"></pre>
-    <pre class="userinfo hidden"></pre>
-  </div>
-</article>
+<p>authenticating...</p>
 
-<article>
-  <h2>Access Token</h2>
-  <div id="access_token">
-    <pre class="given">No access_token given.</pre>
-    <pre class="verified hidden"></pre>
-  </div>
-</article>
-
-<article>
-  <h2>ID Token</h2>
-  <div id="id_token">
-    <pre class="given">No id_token given.</pre>
-    <pre class="verified hidden"></pre>
-  </div>
-</article>
+<%= form_tag provider_open_id_path(@provider), id: 'authenticate' do %>
+  <%= hidden_field_tag :id_token, nil %>
+<% end %>
 
 <script>
 (function ($) {
-  var fragment = $.url().fparam();
-
-  if (fragment.code) {
-    // TODO
-  }
-
-  if (fragment.access_token) {
-    // TODO
-  }
+  // var fragment = $.url().fparam();
+  var fragment = $.url().param();
 
   if (fragment.id_token) {
-    $.post(
-      '<%= provider_open_id_path(@provider) %>'
-    );
+    $('#id_token .given').text(fragment.id_token);
+    $('input#id_token').val(fragment.id_token)
+    $('form#authenticate').submit();
   }
 })(jQuery);
 </script>

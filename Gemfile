@@ -9,6 +9,7 @@ gem 'turbolinks'
 gem 'jbuilder', '~> 1.2'
 
 gem 'openid_connect'
+gem 'quiet_assets'
 
 group :doc do
   # bundle exec rake doc:rails generates the API under doc/api.

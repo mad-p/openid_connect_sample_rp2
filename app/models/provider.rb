@@ -11,8 +11,8 @@ class Provider < ActiveRecord::Base
   validates :authorization_endpoint, presence: {if: :registered?}
   validates :token_endpoint,         presence: {if: :registered?}
 
-  scope :dynamic, where(dynamic: true)
-  scope :static,  where(dynamic: false)
+  scope :dynamic, lambda { where(dynamic: true) }
+  scope :static,  lambda { where(dynamic: false) }
   scope :valid, lambda {
     where {
       (expires_at == nil) |
@@ -83,21 +83,37 @@ class Provider < ActiveRecord::Base
   end
 
   def decode_id(id_token)
-    OpenIDConnect::ResponseObject::IdToken.decode id_token, config.public_keys.first
+    public_key = if jwks_uri
+      JSON::JWK.decode JSON.parse(
+        OpenIDConnect.http_client.get_content(jwks_uri)
+      )['keys'].first
+    else
+      config.public_keys.first
+    end
+    OpenIDConnect::ResponseObject::IdToken.decode id_token, public_key
   end
 
-  def authenticate(redirect_uri, code, nonce)
-    client.redirect_uri = redirect_uri
-    client.authorization_code = code
-    access_token = client.access_token!
-    _id_token_ = decode_id access_token.id_token
+  def authenticate(code: nil, id_token: nil, access_token: nil, redirect_uri: nil, nonce: nil)
+    if code.present?
+      client.redirect_uri = redirect_uri
+      client.authorization_code = code
+      access_token = client.access_token!
+      id_token = access_token.id_token
+    end
+    unless id_token.present?
+      raise Authentication::AuthenticationRequired.new('No valid ID Token given')
+    end
+    _id_token_ = decode_id id_token
     _id_token_.verify!(
-      issuer: issuer,
+      issuer:    issuer,
       client_id: identifier,
-      nonce: nonce
+      nonce:     nonce
     )
-    open_id = self.open_ids.find_or_initialize_by_identifier _id_token_.subject
-    open_id.access_token, open_id.id_token = access_token.access_token, access_token.id_token
+    open_id = self.open_ids.find_or_initialize_by identifier: _id_token_.subject
+    if access_token.present?
+      open_id.access_token = access_token.access_token
+    end
+    open_id.id_token = id_token
     open_id.save!
     open_id.account || Account.create!(open_id: open_id)
   end

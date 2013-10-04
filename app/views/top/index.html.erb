@@ -3,7 +3,7 @@
   <p><%= 'top.description'.t %></p>
   <nav class="connect">
     <ul>
-      <% Provider.static.all.each do |provider| %>
+      <% Provider.static.each do |provider| %>
         <li>
           <%= form_tag provider_open_id_path(provider) do %>
             <%= submit_tag 'open_ids.create.title'.t(provider: provider.name) %>
@@ -20,9 +20,3 @@
     </div>
   </nav>
 </article>
-
-<script>
-(function ($) {
-  console.info($.url().fparam());
-})(jQuery);
-</script>

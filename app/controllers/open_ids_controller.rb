@@ -10,10 +10,18 @@ class OpenIdsController < ApplicationController
   end
 
   def create
-    redirect_to @provider.authorization_uri(
-      provider_open_id_url(@provider),
-      new_nonce
-    )
+    if params[:id_token]
+      authenticate @provider.authenticate(
+        id_token: params[:id_token],
+        nonce:    stored_nonce
+      )
+      redirect_to account_url
+    else
+      redirect_to @provider.authorization_uri(
+        provider_open_id_url(@provider),
+        new_nonce
+      )
+    end
   end
 
   private
@@ -24,9 +32,9 @@ class OpenIdsController < ApplicationController
 
   def code_flow_callback
     authenticate @provider.authenticate(
-      provider_open_id_url(provider),
-      params[:code],
-      stored_nonce
+      redirect_uri: provider_open_id_url(provider),
+      code:         params[:code],
+      nonce:        stored_nonce
     )
     redirect_to account_url
   end
