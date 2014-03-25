@@ -88,10 +88,13 @@ class Provider < ActiveRecord::Base
   end
 
   def decode_id(id_token)
+    kid = (JSON::JWT.decode(id_token, :skip_verification).header["kid"]) rescue nil
     public_key = if jwks_uri
-      JSON::JWK.decode JSON.parse(
+      keys = JSON.parse(
         OpenIDConnect.http_client.get_content(jwks_uri)
-      )['keys'].first
+      )['keys']
+      key = keys.find{|k| k["kid"] == kid} || keys.first
+      JSON::JWK.decode key
     else
       config.public_keys.first
     end
